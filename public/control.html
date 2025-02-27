@@ -9,32 +9,103 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            margin-top: 50px;
+            margin: 20px;
         }
 
         button {
             padding: 10px 20px;
-            margin: 10px;
             font-size: 16px;
+            margin: 10px;
             cursor: pointer;
+            border: none;
+            background-color: lightgray;
+            transition: background-color 0.3s;
+        }
+
+        .active {
+            background-color: green;
+            color: white;
+        }
+
+        #status {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
         }
     </style>
 </head>
 
 <body>
-    <h1>Monitor Control Panel</h1>
-    <button onclick="sendCommand('CHANGE_TO_BLACK_SCREEN')">Black Screen</button>
-    <button onclick="sendCommand('CHANGE_TO_PASSWORD_SITE')">Password Page</button>
-    <button onclick="sendCommand('CHANGE_TO_FINAL_SCREEN')">Final Screen</button>
+
+    <h1>Control Panel</h1>
+
+    <button id="blackBtn" onclick="sendCommand('CHANGE_TO_BLACK_SCREEN')">Black Screen</button>
+    <button id="passwordBtn" onclick="sendCommand('CHANGE_TO_PASSWORD_SITE')">Password Screen</button>
+    <button id="finalBtn" onclick="sendCommand('CHANGE_TO_FINAL_SCREEN')">Final Screen</button>
+
+    <p id="status">Current Status: <span id="currentStatus">Black Screen</span></p>
 
     <script>
+        const ip_addr = "192.168.1.28"; // Replace with actual server IP
+
+        // Function to send a command to the server
         function sendCommand(command) {
-            fetch(`http://${window.location.hostname}:8081/send/${command}`)
-                .then(response => response.text())
-                .then(alert)
-                .catch(error => console.error('Error sending command:', error));
+            fetch(`http://${ip_addr}:8081/send/${command}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to send command');
+                    }
+                    return response.text();
+                })
+                .then(() => {
+                    updateStatus(command); // Update UI immediately after sending command
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
         }
+
+        // Function to update the status based on the current state
+        function updateStatus(command) {
+            const statusText = document.getElementById("currentStatus");
+            const buttons = document.querySelectorAll("button");
+
+            // Reset button styles
+            buttons.forEach(btn => btn.classList.remove("active"));
+
+            // Update the status and button styles based on the command
+            if (command === "CHANGE_TO_BLACK_SCREEN") {
+                statusText.textContent = "Black Screen";
+                document.getElementById("blackBtn").classList.add("active");
+            } else if (command === "CHANGE_TO_PASSWORD_SITE") {
+                statusText.textContent = "Password Screen";
+                document.getElementById("passwordBtn").classList.add("active");
+            } else if (command === "CHANGE_TO_FINAL_SCREEN") {
+                statusText.textContent = "Final Screen";
+                document.getElementById("finalBtn").classList.add("active");
+            }
+        }
+
+        // Function to fetch and update the current state from the server
+        function fetchCurrentState() {
+            fetch(`http://${ip_addr}:8081/current-state`)
+                .then(response => response.json())
+                .then(data => {
+                    const state = data.state; // Extract the state from the response
+                    updateStatus(state); // Update the UI to reflect the current state
+                })
+                .catch(error => {
+                    console.error('Error fetching current state:', error);
+                });
+        }
+
+        // Periodically check for the current state and update the UI every 3 seconds
+        setInterval(fetchCurrentState, 3000);
+
+        // Initial fetch to populate the current state on page load
+        fetchCurrentState();
     </script>
+
 </body>
 
 </html>
