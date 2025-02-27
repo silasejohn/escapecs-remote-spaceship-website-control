@@ -17,9 +17,22 @@ This repo will set up a web-based monitor system where the appearance / function
 ## Setup Instructions
 
 ### 1. Install Dependecies
-ensure that node.js and websockets is installed on the machine that will display the monitor content (index.html)
+- Install Node.js from https://nodejs.org/en (includes node - javascript runtime and npm - package manager). verify the installation with:
 ```
-npm install express ws
+node -v
+npm -v
+```
+- clone the github repo
+```
+git clone git@github.com:silasejohn/escapecs-remote-spaceship-website-control.git
+```
+- cd into project directory
+```
+cd escapecs-remote-spaceship-website-control
+```
+- install dependecies w/ the following command (aka express, ws)
+```
+npm install
 ```
 
 ### 2. Determine Your Local IP Address
