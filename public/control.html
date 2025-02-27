@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Panel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Monitor Control Panel</h1>
+    <button onclick="sendCommand('CHANGE_TO_BLACK_SCREEN')">Black Screen</button>
+    <button onclick="sendCommand('CHANGE_TO_PASSWORD_SITE')">Password Page</button>
+    <button onclick="sendCommand('CHANGE_TO_FINAL_SCREEN')">Final Screen</button>
+
+    <script>
+        function sendCommand(command) {
+            fetch(`http://${window.location.hostname}:8081/send/${command}`)
+                .then(response => response.text())
+                .then(alert)
+                .catch(error => console.error('Error sending command:', error));
+        }
+    </script>
+</body>
+
+</html>

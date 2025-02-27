@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor Control</title>
+    <style>
+        /* Initial black screen */
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: black;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+
+        // WEBSITE LOAD: http://{ip_addr}:8081/
+
+        // set variable for ip_addr
+        const ip_addr = "192.168.1.28";
+        // const ip_addr = "127.0.0.1";
+
+        // const ws = new WebSocket('ws://<your_local_ip>:8080'); // Replace with your server's local IP
+        const ws = new WebSocket('ws://' + ip_addr + ':8080'); // Replace with your server's local IP
+
+        // Function to reset the page to initial black screen
+        function resetToSolidScreen(color) {
+            document.body.style.backgroundColor = color;
+            document.body.innerHTML = ''; // Clear all content
+            const hint = document.createElement('div');
+            hint.style.color = '#fff';
+            document.body.appendChild(hint);
+        }
+
+        // Function to load and display password page
+        function loadPasswordPage() {
+            fetch('password.html')
+                .then(response => response.text())
+                .then(html => {
+                    document.body.innerHTML = html; // Replace the entire content with password page
+                    console.log('Password page loaded');
+                })
+                .catch(error => {
+                    console.error('Error loading password page:', error);
+                });
+        }
+
+        ws.onmessage = (event) => {
+            const data = event.data;
+            if (data === 'CHANGE_TO_BLACK_SCREEN') {
+                resetToSolidScreen('black'); // Reset to initial black screen
+                console.log('CHANGE_TO_BLACK_SCREEN');
+            } else if (data === 'CHANGE_TO_PASSWORD_SITE') {
+                loadPasswordPage(); // Dynamically load password page content
+            } else if (data === 'CHANGE_TO_FINAL_SCREEN') {
+                resetToSolidScreen('green'); // Change to final screen with green background
+                console.log('CHANGE_TO_FINAL_SCREEN');
+            }
+        };
+
+        ws.onopen = () => {
+            console.log('Connected to WebSocket server');
+        };
+
+        ws.onclose = () => {
+            console.log('Disconnected from WebSocket server');
+        };
+    </script>
+</body>
+
+</html>
