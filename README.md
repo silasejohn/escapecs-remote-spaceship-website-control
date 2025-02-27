@@ -75,6 +75,7 @@ http://<device_ip>:8081/control # live control panel (any device on wifi can acc
 
 
 ## TODO
-- [ ] make the actual 2 website links output
+- [x] expose the current state of the index.html such that control ui can auto display it as it changes (enables multi-device control)
+- [x] make the actual 2 website links output when running `node server.js`
 - [ ] host the actual control website for easy access
 - [ ] dockerize the requirements
