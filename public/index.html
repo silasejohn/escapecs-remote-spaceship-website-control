@@ -46,6 +46,11 @@
                 .then(html => {
                     document.body.innerHTML = html; // Replace the entire content with password page
                     console.log('Password page loaded');
+                    // replace current styling with password.css styling 
+                    // const link = document.createElement('link');
+                    // link.rel = 'stylesheet';
+                    // link.href = 'password.css';
+                    // document.head.appendChild(link);
                 })
                 .catch(error => {
                     console.error('Error loading password page:', error);
